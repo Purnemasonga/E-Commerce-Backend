@@ -21,7 +21,7 @@ app.use("/products", productRouter);
 app.use("/user", UserRouter);
 app.use("/ai", prompt);
 
-const cartRouter=require("./routes/cartRouter");
+const cartRouter=require("./routes/CartRouter");
 app.use("/cart",cartRouter);
 
 
