@@ -1,0 +1,193 @@
+const Products = require("../model/ProductModel");
+
+// add products
+const addProducts = async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const newProduct = {
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description,
+      ratings: req.body.ratings,
+      imageSrc: req.body.imageSrc,
+      about: req.body.about,
+      reviews: req.body.reviews,
+    };
+    await Products.create(newProduct);
+
+    console.log("add product handler");
+
+    res.status(201).json({ message: "Product Added" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed add Product", error: err });
+  }
+};
+
+// // get all products
+// const getProducts = async (req, res) => {
+//   try {
+//     const products = await Products.find();
+
+//     res.status(200).json({
+//       success: true,
+//       products,
+//     });
+//   } catch (err) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch products",
+//       error: err.message,
+//     });
+//   }
+// };
+
+//edit productDetails
+const editProducts = async (req, res) => {
+  try {
+    const updatedProduct = await Products.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+    res.status(200).json({ message: "updated successfully", updatedProduct });
+  } catch (error) {
+    res.status(500).json({ message: "failed to update details" });
+  }
+};
+
+//delete products
+const deleteProduct = async (req, res) => {
+  try {
+    const deletedProduct = await Products.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Product Deleted", deletedProduct });
+  } catch (error) {
+    res.status(500).json({ message: "failed to Delete", error });
+  }
+};
+
+
+//get product based on ID
+const getProductBasedOnId = async (req, res) => {
+  try {
+    const foundProduct = await Products.findById(req.params.id);
+    res.status(200).json({ foundProduct });
+  } catch (error) {
+    res.status(500).json({ message: "failed get Product" });
+  }
+};
+
+//get all products
+const getAllProducts = async (req, res) => {
+  try {
+    const allProducts = await Products.find();
+    res.status(200).json({ allProducts });
+  } catch (error) {
+    res.status(500).json({ message: "failed get all Product", error });
+  }
+};
+
+//filter products based on price
+//http://localhost:6000/products/filter-products - in body type : --- req.body//
+const filterProductsBasedOnPrice = async (req, res) => {
+  try {
+    const { max, min } = req.query;
+    const filteredProducts = await Products.find({
+      price: { $gte: min },
+      price: { $lte: max },
+    });
+    res.status(200).json({ filteredProducts });
+  } catch (error) {
+    res.status(500).json({ message: "failed to filter", error });
+  }
+};
+
+//sort products based on price
+const sortProductsBasedOnPrices = async (req, res) => {
+  try {
+    const sortPrice = Number(req.query.sortPrice)||1;   
+    const sortedProducts = await Products.find().sort({ price: sortPrice });
+    res.status(200).json({ sortedProducts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "failed to sort, internal server error", error });
+  }
+};
+module.exports = {
+  addProducts,
+  editProducts,
+  deleteProduct,
+  getProductBasedOnId,
+  filterProductsBasedOnPrice,
+  sortProductsBasedOnPrices,
+  getAllProducts
+};
+
+
+
+// //edit productDetails
+// const editProducts=async(req, res)=>{
+//     try{
+//         const updatedProduct=Products.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             {new:true},
+//         );
+//         res.status(200).json({message: "updated successfully", updatedProduct});
+//     }catch (error){
+//         res.status(500).json({message: "failed to update details"});
+//     };
+// };
+
+// //delete products
+// const deleteProduct = async(req, res)=>{
+//     try{
+//         const deleteProducts= Products.findByIdAndDelete(req.params.id);
+//         res.status(200).json({message: "Product deleted", deleteProduct});
+//     }catch (error) {
+//         res.status(500).json({message: "failed to delete"})
+//     }
+// };
+
+// //get product based on id
+// const getProductBasedonId=async(req, res)=>{
+//     try{
+//         const foundProduct=await Products.findById(req.params.id);
+//         res.status(200).json({message: "Product deleted", deleteProduct});
+
+//     }catch(error) {
+//         res.status(500).json({message: "failed to get "});
+//     }
+// };
+
+// //filter products based on price
+// const filterProductsBasedOnPrice=async(req,res)=>{
+//     try{
+//         const {highestPrice,lowestPrice}=req.body;
+
+//         const filteredProducts = await Products.find({
+//             price:{$gte:lowestPrice}, 
+//             price:{$lte:highestPrice},
+//         });
+//         res.status(200).json({filteredProducts});
+//     }catch(error){
+//         res.status(500).json({mesage: "failed to filter "});
+//     }
+// };
+
+// //sort products based on price
+// const sortProductsBasedOnPrices=async(req,res)=>{
+//     try{
+//         const sortOrder=Number (req.params.order);
+//         const sortedProducts= Products.find().sort({price:sortOrder})
+//         res.status(200).json({sortedProducts})
+//     }catch(error){
+//         res.status(500).json({message: "failed to sort, internal server error"});
+//     }
+// };
+
+
+
+
+
